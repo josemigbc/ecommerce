@@ -19,6 +19,7 @@ from django.urls import path,include
 from rest_framework.routers import SimpleRouter
 from products import views as prod_views
 from cart.views import PurchaseViewset
+from payments.views import PaymentView
 
 products_router = SimpleRouter()
 products_router.register(r'product',prod_views.ProductViewset)
@@ -30,4 +31,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include("authentication.urls")),
     path("category/",prod_views.CategoryListView.as_view(), name="category-list"),
+    path("payment/", PaymentView.as_view(), name="payment"),
 ] + products_router.urls + purchase_router.urls
