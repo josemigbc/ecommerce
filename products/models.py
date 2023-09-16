@@ -23,7 +23,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name=_(
         "Category"), on_delete=models.CASCADE)
     price = models.IntegerField(_("Price"))
-    image = models.CharField(_("Image URL"), max_length=200)
+    image = models.ImageField(_("Image"),null=True)
     amount = models.IntegerField(_("Amount"))
 
     class Meta:

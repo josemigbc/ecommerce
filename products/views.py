@@ -1,8 +1,8 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
-from rest_framework import status
+from django.views import View
+from django.http import FileResponse
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
 
@@ -25,3 +25,7 @@ class ProductViewset(ReadOnlyModelViewSet):
                 raise ValidationError(detail="Missing param category", code=400)
             return self.queryset.filter(category=category)
         return super().get_queryset()
+    
+class ProductImageView(View):
+    def get(self,request,filename):
+        return FileResponse(open(f"media/{filename}","rb"))

@@ -1,7 +1,7 @@
 import datetime
 
 from django.utils import timezone
-from rest_framework import permissions, status
+from rest_framework import permissions, status, exceptions
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -26,7 +26,10 @@ class PurchaseViewset(ModelViewSet):
     def get_serializer(self, *args, **kwargs):
         data = kwargs.get("data")
         if data:
-            data["user"] = self.request.user.pk
+            try:
+                data["user"] = self.request.user.pk
+            except:
+                raise exceptions.ValidationError(detail={"The content must be application/json."})
 
         return super().get_serializer(*args, **kwargs)
 

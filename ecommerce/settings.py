@@ -21,7 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY','django-insecure-@n$!*tfq)@c$qc29&3r4lbdyj)m0+k5@j6b=hdd#g(h5p#7rs7')
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY', 'django-insecure-@n$!*tfq)@c$qc29&3r4lbdyj)m0+k5@j6b=hdd#g(h5p#7rs7')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -87,14 +88,14 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 } """
 
 DATABASES = {
-    'default':{
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'ecommerce',
         'USER': 'ecommerce',
-        'PASSWORD':'holamundo',
-        'HOST':'localhost',
-        'PORT':'5432',
-    }
+        'PASSWORD': 'holamundo',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
 }
 
 
@@ -133,6 +134,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+MEDIA_ROOT = 'media/'
+
+MEDIA_URL = 'media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

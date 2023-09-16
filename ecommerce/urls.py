@@ -32,4 +32,5 @@ urlpatterns = [
     path('',include("authentication.urls")),
     path("category/",prod_views.CategoryListView.as_view(), name="category-list"),
     path("payment/", PaymentView.as_view(), name="payment"),
+    path("media/<str:filename>/",prod_views.ProductImageView.as_view(), name="product-image"),
 ] + products_router.urls + purchase_router.urls

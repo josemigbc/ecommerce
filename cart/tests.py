@@ -9,17 +9,21 @@ import freezegun
 
 User = get_user_model()
 
+def create_two_products(with_user=True):
+    category = Category.objects.create(name="test")
+    product1 = Product.objects.create(name="test1", category=category,
+                                    description="test", price=20, amount=20, image="/static/1.png")
+    product2 = Product.objects.create(name="test2", category=category,
+                                    description="test", price=20, amount=20, image="/static/2.png")
+    user = User.objects.create_user(
+            username="test", password="testing1234")
+        
+    return product1,product2,user if with_user else None
 
 class PurchaseModelTest(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        category = Category.objects.create(name="test")
-        cls.product1 = Product.objects.create(name="test1", category=category,
-                                              description="test", price=20, amount=20, image="/static/1.png")
-        cls.product2 = Product.objects.create(name="test2", category=category,
-                                              description="test", price=20, amount=20, image="/static/2.png")
-        cls.user = User.objects.create_user(
-            username="test", password="testing1234")
+        cls.product1, cls.product2, cls.user = create_two_products() 
 
     def test_checkout_and_signal(self):
         purchase = Purchase.objects.create(
@@ -44,13 +48,7 @@ class PurchaseSerializerTest(APITestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        category = Category.objects.create(name="test")
-        cls.product1 = Product.objects.create(name="test1", category=category,
-                                              description="test", price=20, amount=20, image="/static/1.png")
-        cls.product2 = Product.objects.create(name="test2", category=category,
-                                              description="test", price=20, amount=20, image="/static/2.png")
-        cls.user = User.objects.create_user(
-            username="test", password="testing1234")
+        cls.product1, cls.product2, cls.user = create_two_products()
 
     def test_is_valid_with_ok(self):
         serializer = PurchaseSerializer(data={"user": self.user.pk, "content": {
@@ -85,17 +83,11 @@ class PurchaseViewsetTest(APITestCase):
     def setUpTestData(cls) -> None:
         cls.viewset = PurchaseViewset()
         cls.factory = APIRequestFactory()
-        category = Category.objects.create(name="test")
-        cls.product1 = Product.objects.create(name="test1", category=category,
-                                              description="test", price=20, amount=20, image="/static/1.png")
-        cls.product2 = Product.objects.create(name="test2", category=category,
-                                              description="test", price=20, amount=20, image="/static/2.png")
-        cls.user = User.objects.create_user(
-            username="test", password="testing1234")
+        cls.product1, cls.product2, cls.user = create_two_products()
 
     def test_get_queryset(self):
         with freezegun.freeze_time("2023-09-13 12:00"):
-            purchase1 = Purchase.objects.create(
+            Purchase.objects.create(
                 user=self.user, content={self.product1.pk: 20, self.product2.pk: 4})
 
         with freezegun.freeze_time("2023-09-13 12:05"):

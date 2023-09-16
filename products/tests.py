@@ -1,5 +1,6 @@
 from rest_framework.test import APITestCase, APIRequestFactory
 from rest_framework import exceptions
+from django.http import FileResponse
 from products.views import ProductViewset
 from products.models import Product, Category
 
