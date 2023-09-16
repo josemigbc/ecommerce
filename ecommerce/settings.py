@@ -25,9 +25,13 @@ SECRET_KEY = os.environ.get(
     'SECRET_KEY', 'django-insecure-@n$!*tfq)@c$qc29&3r4lbdyj)m0+k5@j6b=hdd#g(h5p#7rs7')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = []
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 
 # Application definition
@@ -47,6 +51,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -87,15 +92,25 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
     }
 } """
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ecommerce',
-        'USER': 'ecommerce',
-        'PASSWORD': 'holamundo',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    },
+import dj_database_url
+
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'ecommerce',
+            'USER': 'ecommerce',
+            'PASSWORD': 'holamundo',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        },
+    }
+else:
+    DATABASES = {
+    'default': dj_database_url.config(
+        default='postgresql://postgres:postgres@localhost:5432/mysite',
+        conn_max_age=600
+    )
 }
 
 
@@ -138,6 +153,15 @@ STATIC_URL = 'static/'
 MEDIA_ROOT = 'media/'
 
 MEDIA_URL = 'media/'
+
+if not DEBUG:
+    # Tell Django to copy statics to the `staticfiles` directory
+    # in your application directory on Render.
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+    # Turn on WhiteNoise storage backend that takes care of compressing static files
+    # and creating unique names for each version so they can safely be cached forever.
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
