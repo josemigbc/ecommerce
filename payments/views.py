@@ -30,7 +30,7 @@ class PaymentView(APIView):
     def post(self,request):
         try:
             charge_token = request.data['charge_token']
-            purchase_id = request.data['purchase']
+            purchase_id = request.data['purchase_id']
             purchase = Purchase.objects.get(id=purchase_id)
             spent = timezone.now() - purchase.datetime
             

@@ -9,21 +9,23 @@ import freezegun
 
 User = get_user_model()
 
+
 def create_two_products(with_user=True):
     category = Category.objects.create(name="test")
     product1 = Product.objects.create(name="test1", category=category,
-                                    description="test", price=20, amount=20, image="/static/1.png")
+                                      description="test", price=20, amount=20, image="/static/1.png")
     product2 = Product.objects.create(name="test2", category=category,
-                                    description="test", price=20, amount=20, image="/static/2.png")
+                                      description="test", price=20, amount=20, image="/static/2.png")
     user = User.objects.create_user(
-            username="test", password="testing1234")
-        
-    return product1,product2,user if with_user else None
+        username="test", password="testing1234")
+
+    return product1, product2, user if with_user else None
+
 
 class PurchaseModelTest(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.product1, cls.product2, cls.user = create_two_products() 
+        cls.product1, cls.product2, cls.user = create_two_products()
 
     def test_checkout_and_signal(self):
         purchase = Purchase.objects.create(
@@ -104,32 +106,34 @@ class PurchaseViewsetTest(APITestCase):
 
     def test_get_serializer_with_data(self):
         data = {"content": {self.product1.pk: 20, self.product2.pk: 4}}
-        request = APIRequestFactory("/purchase/",data=data)
+        request = APIRequestFactory("/purchase/", data=data)
         request.user = self.user
         self.viewset.format_kwarg = {}
         self.viewset.request = request
         serializer = self.viewset.get_serializer(data=data)
-        data.update({"user":self.user.pk})
+        data.update({"user": self.user.pk})
         expected_serializer = PurchaseSerializer(data=data)
-        
-        self.assertEqual(expected_serializer.initial_data,serializer.initial_data)
-        
+
+        self.assertEqual(expected_serializer.initial_data,
+                         serializer.initial_data)
+
     def test_get_serializer_without_data(self):
         request = self.factory.get("/purchase/")
         request.user = self.user
         self.viewset.format_kwarg = {}
         self.viewset.request = request
-        purchase = Purchase.objects.create(user=self.user,content={self.product1.pk: 20, self.product2.pk: 4})
+        purchase = Purchase.objects.create(
+            user=self.user, content={self.product1.pk: 20, self.product2.pk: 4})
         serializer = self.viewset.get_serializer(purchase)
         expected_serializer = PurchaseSerializer(purchase)
-        
-        self.assertEqual(expected_serializer.instance,serializer.instance)
-        
+
+        self.assertEqual(expected_serializer.instance, serializer.instance)
+
     def test_update(self):
         purchase = Purchase.objects.create(
-                user=self.user, content={self.product1.pk: 20, self.product2.pk: 4})
+            user=self.user, content={self.product1.pk: 20, self.product2.pk: 4})
         request = self.factory.patch(f"/purchase/{purchase.pk}/")
         request.user = self.user
         response = self.viewset.update(request)
-        
-        self.assertEqual(response.status_code,405)
+
+        self.assertEqual(response.status_code, 405)

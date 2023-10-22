@@ -3,7 +3,8 @@ import datetime
 from django.utils import timezone
 from rest_framework import permissions, status, exceptions
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 
 from .models import Purchase
 from .serializers import PurchaseSerializer
@@ -11,7 +12,7 @@ from .serializers import PurchaseSerializer
 # Create your views here.
 
 
-class PurchaseViewset(ModelViewSet):
+class PurchaseViewset(GenericViewSet, ListCreateAPIView, RetrieveAPIView):
     serializer_class = PurchaseSerializer
     queryset = Purchase.objects.all()
     permission_classes = [permissions.IsAuthenticated]
@@ -29,9 +30,7 @@ class PurchaseViewset(ModelViewSet):
             try:
                 data["user"] = self.request.user.pk
             except:
-                raise exceptions.ValidationError(detail={"The content must be application/json."})
+                raise exceptions.ValidationError(
+                    detail={"The content must be application/json."})
 
         return super().get_serializer(*args, **kwargs)
-
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

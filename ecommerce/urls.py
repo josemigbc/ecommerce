@@ -20,6 +20,7 @@ from rest_framework.routers import SimpleRouter
 from products import views as prod_views
 from cart.views import PurchaseViewset
 from payments.views import PaymentView
+from .docs import schema_view
 
 products_router = SimpleRouter()
 products_router.register(r'product',prod_views.ProductViewset)
@@ -29,6 +30,7 @@ purchase_router.register(r'purchase',PurchaseViewset)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("docs/", schema_view.with_ui('swagger',cache_timeout=0), name="docs"),
     path('',include("authentication.urls")),
     path("category/",prod_views.CategoryListView.as_view(), name="category-list"),
     path("payment/", PaymentView.as_view(), name="payment"),
