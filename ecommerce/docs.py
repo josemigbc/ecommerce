@@ -4,9 +4,9 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="API Rest de Coral Blue World",
+        title="API Rest of E-commerce",
         default_version='v0.1',
-        description="API Rest de Coral Blue World",
+        description="API Rest of E-commerce",
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
